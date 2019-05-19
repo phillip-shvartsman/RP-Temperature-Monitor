@@ -1,0 +1,10 @@
+#Node Modules
+node_modules
+
+#Built Server Javascript
+dist/*
+
+#Built Client Javascript
+public/javascripts/build.js
+
+.env
