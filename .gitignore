@@ -7,4 +7,8 @@ dist/*
 #Built Client Javascript
 public/javascripts/build.js
 
+#Environment Variable
 .env
+
+#Database
+*.sqlite
