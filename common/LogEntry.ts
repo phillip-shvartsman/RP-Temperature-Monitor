@@ -13,6 +13,8 @@ export default class LogEntry {
     public hour: number;
     public minute: number;
 
+    public timeStamp: number;
+
     constructor(sensorUid: string, temp: number) {
         this.sensorUid = sensorUid;
         this.temp = temp;
@@ -21,8 +23,10 @@ export default class LogEntry {
 
         this.year = now.year();
         this.month = now.month();
-        this.day = now.daysInMonth();
+        this.day = now.date();
         this.hour = now.hour();
         this.minute = now.minute();
+
+        this.timeStamp = now.valueOf();
     }
 }

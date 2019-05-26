@@ -7,22 +7,27 @@ import TempSensor from './TempSensors';
 import * as dotenv from 'dotenv';
 
 const httpDebug = debug('http');
-
+const sensorDebug = debug('sensors');
 
 async function startTempLogging() {
-    await tempSensor.setSensors();
-    const sensorUids = await tempSensor.getUids();
-    await DB.registerSensors(sensorUids);
-    setInterval(async () => {
-        const logEntries = await tempSensor.getTemperatures();
-        await DB.addLogEntries(logEntries);
-    }, 10000);
+    try {
+        await tempSensor.setSensors();
+        const sensorUids = await tempSensor.getUids();
+        await DB.registerSensors(sensorUids);
+        setInterval(async () => {
+            const logEntries = await tempSensor.getTemperatures();
+            await DB.addLogEntries(logEntries);
+        }, 60000);
+    } catch (err) {
+        sensorDebug(err);
+    }
 }
 
 dotenv.config();
 
-import routes from './routes/index';
-
+import index from './routes/index';
+import settings from './routes/settings';
+import logs from './routes/log';
 
 const app = express();
 
@@ -32,7 +37,9 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/', routes);
+app.use('/', index);
+app.use('/settings', settings);
+app.use('/logs', logs);
 
 const status = 'status';
 
@@ -45,23 +52,12 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 
 // error handler
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-    app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-        res.status(err[status] || 500);
-        res.sendFile(path.join(__dirname, '../html', 'error.html'));
-    });
-}
 
-// production error handler
-// no stacktraces leaked to user
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    res.status(err.status || 500);
-    httpDebug('Got the following error:');
-    httpDebug(err);
-    res.sendFile(path.join(__dirname, '../html', 'error.html'));
+    res.status(err[status] || 500);
+    res.send(err);
 });
+
 
 app.set('port', process.env.PORT );
 

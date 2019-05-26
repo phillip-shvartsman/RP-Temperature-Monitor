@@ -10,20 +10,22 @@
     "clean-db": "knex migrate:rollback --knexfile knexfile.ts",
     "make-db": "knex migrate:latest --knexfile knexfile.ts",
     "seed-db": "knex seed:run --knexfile knexfile.ts",
-    "reset-db": "npm run clean-db && npm run make-db",
-    "debug": "DEBUG=* node ./dist/app.js"
+    "reset-db": "npm run clean-db && npm run make-db && npm run seed-db",
+    "debug": "DEBUG=* node ./dist/app.js",
+    "debug-db": "DEBUG=database node ./dist/app.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "dotenv": "^8.0.0",
     "knex": "^0.16.5",
     "moment": "^2.24.0",
-    "sqlite3": "^4.0.8",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
     "w1temp": "^4.4.1"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.7.52",
     "@types/debug": "^4.1.4",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^4.16.1",
@@ -31,6 +33,8 @@
     "@types/node": "^12.0.2",
     "@vue/cli-plugin-typescript": "^3.7.0",
     "@vue/cli-service": "^3.7.0",
+    "chart.js": "^2.8.0",
+    "sqlite3": "^4.0.8",
     "ts-node": "^8.1.0",
     "tsc": "^1.20150623.0",
     "tsd": "^0.7.3",

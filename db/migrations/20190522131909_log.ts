@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<any> {
         t.integer('temp');
         t.integer('hour');
         t.integer('minute');
+        t.integer('timeStamp');
     });
 }
 
