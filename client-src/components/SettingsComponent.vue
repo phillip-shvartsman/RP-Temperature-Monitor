@@ -1,63 +1,68 @@
 <template>
-    <div class="col align-self-end" id="settings" v-if="displaySettings">
-        <div class="row">
+
+    <div id='settings' v-show='displaySettings'>
+            <h2>Settings</h2>
             <form>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Settings</label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Temperature Unit</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" value="F" v-bind:checked="localTempUnit=='F'" v-model="localTempUnit">
-                    <label class="form-check-label"> Fahrenheit </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" value="C" v-bind:checked="localTempUnit=='C'" v-model="localTempUnit">
-                    <label class="form-check-label"> Celsius </label>
-                </div>
-                <button type="button" @click="saveSettings" class="btn btn-primary">Save</button>
+                <label>Temperature Unit</label> <br>
+                Fahrenheit<input class='radio-option' type='radio' value='F' v-bind:checked='localSettings.tempUnit==F' v-model='localSettings.tempUnit'><br>
+                Celsius<input class='radio-option' type='radio' value='C' v-bind:checked='localSettings.tempUnit==C' v-model='localSettings.tempUnit'><br>
+                <button type='button' @click='saveSettings' class='btn btn-primary'>Save</button>
             </form>
-            <img src="/images/close.png" v-on:click="closeSettings" id="close-settings-icon" height="32" width="32">
-        </div>
+            <img src='/images/close.png' v-on:click='closeSettings' id='close-settings-icon' height='32' width='32'>
     </div>
+
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script lang='ts'>
+import Vue from 'vue';
 import Settings from '../../common/Settings';
 
 export default Vue.extend({
-    props:['displaySettings','tempUnit'],
     data() {
         return {
-            localTempUnit: this.tempUnit,
-        }   
+            localSettings: this.settings,
+        };
     },
     methods: {
-        closeSettings: function(){
+        closeSettings() {
             this.$emit('closeSettings');
         },
-        saveSettings(){
-            const settings = new Settings(this.localTempUnit);
-            this.$emit('saveSettings',settings);
+        saveSettings() {
+            this.$emit('saveSettings', this.localSettings);
         },
     },
+    props: ['displaySettings', 'settings'],
     watch: {
-        tempUnit: function(){
-            this.localTempUnit = this.tempUnit;
+        settings() {
+            this.localSettings = this.settings;
         },
-    }
-})
+    },
+});
 </script>
 
 
 <style>
     #settings {
         z-index: 1050;
+        position: fixed;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        background-color: antiquewhite;
+        padding: 10px;
+        top: 50%;
+        left: 50%;
+        margin-top: -100px;
+        margin-left: -100px;
     }
-    #settings-close-icon {
-        float: right;
+
+    .radio-option {
+        float:left;
+    }
+    #close-settings-icon{
+        position: absolute;
+        top:5px;
+        right:5px;
     }
 </style>
 

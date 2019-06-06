@@ -1,17 +1,17 @@
 <template>
-    <img v-if="displaySettingsIcon" v-on:click="showSettings" id="settings-icon" src="/images/settings.png" height="32" width="32">
+    <img v-if='displaySettingsIcon' v-on:click='showSettings' id='settings-icon' src='/images/settings.png' height='32' width='32'>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
-    props: ['displaySettingsIcon'], 
     methods: {
-        showSettings(){
+        showSettings() {
             this.$emit('toggleSettings');
         },
     },
+    props: ['displaySettingsIcon'],
 })
 export default class App extends Vue {}
 </script>

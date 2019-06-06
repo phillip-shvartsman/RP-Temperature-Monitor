@@ -14,8 +14,6 @@ export async function up(knex: Knex): Promise<any> {
     });
 }
 
-
 export async function down(knex: Knex): Promise<any> {
     return await knex.schema.dropTable('log');
 }
-

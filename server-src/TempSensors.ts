@@ -1,10 +1,9 @@
-import * as W1TEMP from 'w1temp';
-import LogEntry from '../common/LogEntry';
 import debug from 'debug';
+import * as W1TEMP from 'w1temp';
+
+import LogEntry from '../common/LogEntry';
 
 const sensorDebug = debug('sensors');
-
-
 
 export default class TempSensors {
     // Set debug to true to use a fake temp generation. False will use the actual temp sensor.
@@ -13,11 +12,11 @@ export default class TempSensors {
     private sensorUids: string[];
     private debugTemp: number;
 
-    constructor(sensorMode: string) {
+    public constructor(sensorMode: string) {
         this.sensorMode = sensorMode;
         this.sensors = [];
         this.sensorUids = [];
-        this.debugTemp = 70;
+        this.debugTemp = 20;
     }
     public async setSensors(): Promise<void> {
 

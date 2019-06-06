@@ -1,61 +1,70 @@
 <template>
-    <canvas id="main-chart" width="400" height="400"></canvas>
+    <canvas id='main-chart' width='400' height='400'></canvas>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script lang='ts'>
 import Chart, { ChartConfiguration, ChartData, ChartDataSets } from 'chart.js';
+import Vue from 'vue';
 import LogEntry from '../../common/LogEntry';
+import SensorData from '../../common/SensorData';
 
-function cleanData(data: LogEntry[]): ChartData {
-    const bareData: {t: number, y: number}[] = [];
-    for(let i = 0; i < data.length; i++) {
-        bareData.push({t: data[i].timeStamp, y: data[i].temp});
-    }
-    const dataSet: ChartDataSets = {
-        label: 'Temperature',
-        data: bareData,
+function cleanData(data: LogEntry[], currentSensors: SensorData[]): ChartData {
+    // Create a data set for each currently selected sensor.
+    const dataSets: ChartDataSets[] = [];
+    for (const currentSensor of currentSensors) {
+        // Filterout data with the appropriate uid.
+        const filtered = data.filter((logEntry, index, logEntries) => {
+            return logEntry.sensorUid === currentSensor.sensorUid;
+        });
+        // Stripout data required for the graph.
+        const bareData: Array<{t: number, y: number}> = [];
+        for (const logEntry of filtered) {
+            bareData.push({t: logEntry.timeStamp, y: logEntry.temp});
         }
-    return {datasets: [dataSet] };
+        dataSets.push({label: currentSensor.name as string, data: bareData as Array<{t: number, y: number}>});
+    }
+    return {datasets: dataSets };
 }
 
 export default Vue.extend({
-    props: ['tempData'],
-    data(){
+    data() {
         return {
-           logs: {}
-        }
+           logs: {},
+        };
     },
-    methods : {
+    methods: {
         createChart() {
-            const canvas = <HTMLCanvasElement> document.getElementById('main-chart');
-            const ctx = <CanvasRenderingContext2D> canvas.getContext('2d');
-            const data: ChartData = cleanData(this.tempData);
-            
-            const options: ChartConfiguration = 
-            {
-                type: 'line',
-                data: data,
+            const canvas = document.getElementById('main-chart') as HTMLCanvasElement;
+            const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+            const data: ChartData = cleanData(this.tempData, this.currentSensors);
+
+            const options: ChartConfiguration = {
+                data,
                 options: {
                     scales: {
                         xAxes: [{
-                            type: 'time',
                             time: {
-                                unit: 'minute'
-                            }
-                        }]
-                    }
-                }  
+                                unit: 'minute',
+                            },
+                            type: 'time',
+                        }],
+                    },
+                },
+                type: 'line',
             };
-            const chart = new Chart(ctx,options);
+            const chart = new Chart(ctx, options);
         },
     },
+    props: ['tempData', 'currentSensors'],
     watch: {
-        tempData: function(){
+        tempData() {
             this.createChart();
-        }
-    }
-})
+        },
+        currentSensors() {
+            this.createChart();
+        },
+    },
+});
 </script>
 
 <style>

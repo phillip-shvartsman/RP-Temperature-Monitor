@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-
 export default class LogEntry {
     public id?: number;
     public sensorUid: string;
@@ -15,7 +14,7 @@ export default class LogEntry {
 
     public timeStamp: number;
 
-    constructor(sensorUid: string, temp: number) {
+    public constructor(sensorUid: string, temp: number) {
         this.sensorUid = sensorUid;
         this.temp = temp;
 

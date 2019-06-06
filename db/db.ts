@@ -1,8 +1,10 @@
-import * as config from '../knexfile';
+
+import debug from 'debug';
 import Knex from 'knex';
 import LogEntry from '../common/LogEntry';
-import debug from 'debug';
+import SensorData from '../common/SensorData';
 import Settings from '../common/Settings';
+import * as config from '../knexfile';
 
 const dbDebug = debug('database');
 
@@ -35,10 +37,11 @@ export async function registerSensors(sensorUids: string[]): Promise<void> {
     try {
         dbDebug('Attempting to register the following uids', sensorUids);
         for (const sensorUid of sensorUids) {
-            const result: object[] = await knex('sensors').where({sensorUid});
+            const sensorData: SensorData = new SensorData(sensorUid);
+            const result: object[] = await knex('sensors').where({sensorUid: sensorData.sensorUid});
             if (result.length === 0) {
                 dbDebug('Registering new sensor', sensorUid);
-                await knex('sensors').insert({sensorUid, name: sensorUid});
+                await knex('sensors').insert(sensorData);
             } else {
                 dbDebug('Sensor ' + sensorUid + ' already exists in database');
             }
@@ -49,7 +52,7 @@ export async function registerSensors(sensorUids: string[]): Promise<void> {
     }
 }
 
-export async function getSettings(): Promise<any> {
+export async function getSettings(): Promise<Settings> {
     try {
         dbDebug('Retrieving Settings');
         const settings =  await knex('settings').select();
@@ -59,7 +62,7 @@ export async function getSettings(): Promise<any> {
     }
 }
 
-export async function setSettings(settings: Settings): Promise<any> {
+export async function setSettings(settings: Settings): Promise<void> {
     try {
         dbDebug('Updating Settings');
         await knex('settings').where({id: 1 }).update(settings);
@@ -70,14 +73,23 @@ export async function setSettings(settings: Settings): Promise<any> {
     }
 }
 
-export async function getTodayLog(): Promise<LogEntry[]> {
+export async function
+    getLogs(date: {year: number; month: number; day: number; hour: number; minute: number}): Promise<LogEntry[]> {
     try {
-        dbDebug('Getting today\'s temperature logs.');
-        const logEntry = new LogEntry('debug', -1);
+        dbDebug('Getting temperature logs for: ', date);
         const logEntries: LogEntry[] = await knex('log')
-            .where({day: logEntry.day, month: logEntry.month, year: logEntry.year})
+            .where({day: date.day, month: date.month, year: date.year})
             .select('*');
         return logEntries;
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+export async function getSensors(): Promise<SensorData[]> {
+    try {
+        const sensors: SensorData[] = await knex('sensors').select('*');
+        return sensors;
     } catch (err) {
         return Promise.reject(err);
     }
