@@ -4,8 +4,8 @@
             <h2>Settings</h2>
             <form>
                 <label>Temperature Unit</label> <br>
-                Fahrenheit<input class='radio-option' type='radio' value='F' v-bind:checked='localSettings.tempUnit==F' v-model='localSettings.tempUnit'><br>
-                Celsius<input class='radio-option' type='radio' value='C' v-bind:checked='localSettings.tempUnit==C' v-model='localSettings.tempUnit'><br>
+                Fahrenheit<input class='radio-option' type='radio' value='F' v-bind:checked='localSettings.tempUnit=="F"' v-model='localSettings.tempUnit'><br>
+                Celsius<input class='radio-option' type='radio' value='C' v-bind:checked='localSettings.tempUnit=="C"' v-model='localSettings.tempUnit'><br>
                 <button type='button' @click='saveSettings' class='btn btn-primary'>Save</button>
             </form>
             <img src='/images/close.png' v-on:click='closeSettings' id='close-settings-icon' height='32' width='32'>
