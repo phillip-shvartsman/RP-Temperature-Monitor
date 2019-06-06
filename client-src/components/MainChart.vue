@@ -37,10 +37,15 @@ function cleanData(data: LogEntry[], currentSensors: SensorData[], settings: Set
 export default Vue.extend({
     data() {
         return {
-           logs: {},
+           chart: {} as Chart,
         };
     },
     methods: {
+        destroyChart() {
+            if (Object.keys(this.chart).length !== 0 ) {
+                this.chart.destroy();
+            }
+        },
         createChart() {
             const canvas = document.getElementById('main-chart') as HTMLCanvasElement;
             const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -60,18 +65,21 @@ export default Vue.extend({
                 },
                 type: 'line',
             };
-            const chart = new Chart(ctx, options);
+            this.chart = new Chart(ctx, options);
         },
     },
     props: ['tempData', 'currentSensors', 'settings'],
     watch: {
         tempData() {
+            this.destroyChart();
             this.createChart();
         },
         currentSensors() {
+            this.destroyChart();
             this.createChart();
         },
         settings() {
+            this.destroyChart();
             this.createChart();
         },
     },
