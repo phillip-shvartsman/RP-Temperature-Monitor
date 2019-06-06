@@ -94,3 +94,11 @@ export async function getSensors(): Promise<SensorData[]> {
         return Promise.reject(err);
     }
 }
+
+export async function changeSensorName(newName: string, sensorData: SensorData): Promise<void> {
+    try {
+        await knex('sensors').where({sensorUid: sensorData.sensorUid}).update({name: newName});
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}

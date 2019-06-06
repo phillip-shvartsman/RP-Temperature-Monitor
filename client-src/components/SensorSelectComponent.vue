@@ -1,23 +1,42 @@
 <template>
     <div class='sensor-select'>
-        <form class='toggle-display'>
+        <form v-show='!waitingForNameChange' class='toggle-display'>
             <input type='checkbox' id='checkbox' v-model='checked'>
         </form>
-        <div class='custom-tooltip'>{{sensorData.name}}
+        <div v-show='!waitingForNameChange' v-on:click="changeName" class='custom-tooltip'>{{sensorData.name}}
             <span class='custom-tooltiptext'>Uid:{{sensorData.sensorUid}}</span>
         </div>
+        <input v-model="newName" v-show='waitingForNameChange' v-on:blur="cancel" v-on:keyup.esc="cancel" v-on:keyup.enter="sendNewName" type="text" :placeholder="sensorData.name">
     </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue';
+
+import SensorData from '../../common/SensorData';
+
 export default Vue.extend({
-    props: ['sensorData'],
     data() {
         return {
             checked: false as boolean,
+            newName: '' as string,
+            waitingForNameChange: false as boolean,
         };
     },
+    methods: {
+        cancel() {
+            this.waitingForNameChange = false;
+        },
+        changeName() {
+            this.waitingForNameChange = true;
+        },
+        sendNewName() {
+            this.$emit('changeSensorName', this.newName, this.sensorData);
+            this.waitingForNameChange = false;
+            this.checked = false;
+        },
+    },
+    props: ['sensorData'],
     watch: {
         checked() {
             this.$emit('toggleSensor', this.checked, this.sensorData);

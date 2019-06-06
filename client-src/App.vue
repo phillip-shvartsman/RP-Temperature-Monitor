@@ -4,7 +4,7 @@
     <div class='container'>
       <refresh-icon-component v-bind:displayRefreshIcon='displayRefreshIcon' @refreshData='refreshData'></refresh-icon-component>
       <settings-icon-component @toggleSettings='showSettings' v-bind:displaySettingsIcon='displaySettingsIcon'></settings-icon-component>
-      <sensor-select-component @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:key='sensorData.id'></sensor-select-component>
+      <sensor-select-component @changeSensorName='changeSensorName' @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:key='sensorData.id'></sensor-select-component>
       <settings-component @closeSettings='closeSettings' @saveSettings='saveSettings' v-bind:settings='settings' v-bind:displaySettings='displaySettings'></settings-component>
       <main-chart-component v-bind:settings='settings' v-bind:currentSensors='currentSensors' v-bind:tempData='tempData'></main-chart-component>
     </div>
@@ -52,6 +52,11 @@ export default Vue.extend({
         SettingsIconComponent,
     },
     methods: {
+        async changeSensorName(newName: string, sensorData: SensorData) {
+            await postRequest(['sensors', 'rename'], {newName, sensorData});
+            await this.getSensorData();
+            this.currentSensors = [];
+        },
         toggleSensor(checked: boolean, sensorData: SensorData) {
             const id = sensorData.id;
             // Remove incase the sensor already exists.
@@ -73,7 +78,7 @@ export default Vue.extend({
             this.displayRefreshIcon = true;
         },
         async saveSettings(settings: Settings) {
-            const response = await postRequest(['settings', 'set'], settings);
+            await postRequest(['settings', 'set'], settings);
             await this.getSettings();
             this.closeSettings();
         },
