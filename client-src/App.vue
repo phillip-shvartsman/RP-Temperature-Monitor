@@ -6,7 +6,7 @@
       <settings-icon-component @toggleSettings='showSettings' v-bind:displaySettingsIcon='displaySettingsIcon'></settings-icon-component>
       <sensor-select-component @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:key='sensorData.id'></sensor-select-component>
       <settings-component @closeSettings='closeSettings' @saveSettings='saveSettings' v-bind:settings='settings' v-bind:displaySettings='displaySettings'></settings-component>
-      <main-chart-component v-bind:currentSensors='currentSensors' v-bind:tempData='tempData'></main-chart-component>
+      <main-chart-component v-bind:settings='settings' v-bind:currentSensors='currentSensors' v-bind:tempData='tempData'></main-chart-component>
     </div>
   </div>
 </template>
