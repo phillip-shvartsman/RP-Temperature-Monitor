@@ -10,13 +10,13 @@ export default class TempSensors {
     private sensorMode: string;
     private sensors: W1TEMP.Sensor[];
     private sensorUids: string[];
-    private debugTemp: number;
+    private debugTemp: number[];
 
     public constructor(sensorMode: string) {
         this.sensorMode = sensorMode;
         this.sensors = [];
         this.sensorUids = [];
-        this.debugTemp = 20;
+        this.debugTemp = [20, 20, 20];
     }
     public async setSensors(): Promise<void> {
 
@@ -34,7 +34,7 @@ export default class TempSensors {
             sensorDebug('Loaded ' + this.sensors.length + ' sensors.');
 
         } else {
-            this.sensorUids = ['debug'];
+            this.sensorUids = ['debug0', 'debug1', 'debug2'];
             sensorDebug('Starting in test mode');
         }
 
@@ -55,17 +55,16 @@ export default class TempSensors {
             return logEntries;
 
         } else {
-
-            // Set a random temperature if we're running this off the raspberry pi.
-            const r = Math.random();
-
-            if (r > 0.5) {
-                this.debugTemp = this.debugTemp + 1;
-            } else {
-                this.debugTemp = this.debugTemp - 1;
+            const logEntries: LogEntry[] = [];
+            for (let i = 0 ; i < this.sensorUids.length ; i = i + 1) {
+                const r = Math.random();
+                if (r > 0.5) {
+                    this.debugTemp[i] = this.debugTemp[i] + 1;
+                } else {
+                    this.debugTemp[i] = this.debugTemp[i] - 1;
+                }
+                logEntries.push(new LogEntry(this.sensorUids[i], this.debugTemp[i]));
             }
-            const logEntries: LogEntry[] = [new LogEntry('debug', this.debugTemp)];
-
             sensorDebug('Created the following fake entries: ', logEntries);
 
             return logEntries;

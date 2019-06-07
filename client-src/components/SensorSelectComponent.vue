@@ -6,7 +6,7 @@
         <div v-show='!waitingForNameChange' v-on:click="changeName" class='custom-tooltip'>{{sensorData.name}}
             <span class='custom-tooltiptext'>Uid:{{sensorData.sensorUid}}</span>
         </div>
-        <input v-model="newName" v-show='waitingForNameChange' v-on:blur="cancel" v-on:keyup.esc="cancel" v-on:keyup.enter="sendNewName" type="text" :placeholder="sensorData.name">
+        <input v-model="newName" v-show='waitingForNameChange' v-on:blur="cancel" v-on:keyup.esc="cancel" v-on:keyup.enter="sendNewName" type="text" class="sensor-name-change-input" :placeholder="sensorData.name">
     </div>
 </template>
 
@@ -36,16 +36,24 @@ export default Vue.extend({
             this.checked = false;
         },
     },
-    props: ['sensorData'],
+    props: ['sensorData', 'currentSensors'],
     watch: {
         checked() {
             this.$emit('toggleSensor', this.checked, this.sensorData);
+        },
+        currentSensors() {
+            if (this.currentSensors.length === 0 ) {
+                this.checked = false;
+            }
         },
     },
 });
 </script>
 
 <style>
+    .sensor-name-change-input {
+        margin-left: 5px;
+    }
     .sensor-select {
         display: inline-block;
     }

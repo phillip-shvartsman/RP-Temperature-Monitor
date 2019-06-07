@@ -4,7 +4,7 @@
     <div class='container'>
       <refresh-icon-component v-bind:displayRefreshIcon='displayRefreshIcon' @refreshData='refreshData'></refresh-icon-component>
       <settings-icon-component @toggleSettings='showSettings' v-bind:displaySettingsIcon='displaySettingsIcon'></settings-icon-component>
-      <sensor-select-component @changeSensorName='changeSensorName' @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:key='sensorData.id'></sensor-select-component>
+      <sensor-select-component @changeSensorName='changeSensorName' @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:currentSensors='currentSensors' v-bind:key='sensorData.id'></sensor-select-component>
       <settings-component @closeSettings='closeSettings' @saveSettings='saveSettings' v-bind:settings='settings' v-bind:displaySettings='displaySettings'></settings-component>
       <main-chart-component v-bind:settings='settings' v-bind:currentSensors='currentSensors' v-bind:tempData='tempData'></main-chart-component>
     </div>
