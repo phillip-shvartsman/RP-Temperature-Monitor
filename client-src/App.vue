@@ -2,8 +2,9 @@
   <div>
     <black-background-component v-if='displaySettings'></black-background-component>
     <div class='container'>
-      <refresh-icon-component v-bind:displayRefreshIcon='displayRefreshIcon' @refreshData='refreshData'></refresh-icon-component>
+      <refresh-icon-component v-bind:displayRefreshIcon='displayRefreshIcon' @refreshData='getLogs'></refresh-icon-component>
       <settings-icon-component @toggleSettings='showSettings' v-bind:displaySettingsIcon='displaySettingsIcon'></settings-icon-component>
+      <date-select-component @dateChanged='changeDate' v-bind:selectedDate="selectedDate"></date-select-component>
       <sensor-select-component @changeSensorName='changeSensorName' @toggleSensor='toggleSensor' v-for='sensorData in sensorsData' v-bind:sensorData='sensorData' v-bind:currentSensors='currentSensors' v-bind:key='sensorData.id'></sensor-select-component>
       <settings-component @closeSettings='closeSettings' @saveSettings='saveSettings' v-bind:settings='settings' v-bind:displaySettings='displaySettings'></settings-component>
       <main-chart-component v-bind:settings='settings' v-bind:currentSensors='currentSensors' v-bind:tempData='tempData'></main-chart-component>
@@ -15,6 +16,7 @@
 import Vue from 'vue';
 
 import BlackBackgroundComponent from './components/BlackBackgroundComponent.vue';
+import DateSelectComponent from './components/DateSelectComponent.vue';
 import MainChartComponent from './components/MainChart.vue';
 import RefreshIconComponent from './components/RefreshIconComponent.vue';
 import SensorSelectComponent from './components/SensorSelectComponent.vue';
@@ -45,6 +47,7 @@ export default Vue.extend({
     },
     components: {
         BlackBackgroundComponent,
+        DateSelectComponent,
         MainChartComponent,
         RefreshIconComponent,
         SensorSelectComponent,
@@ -52,6 +55,10 @@ export default Vue.extend({
         SettingsIconComponent,
     },
     methods: {
+        async changeDate(newDateString: string) {
+            this.selectedDate = new Date(newDateString);
+            await this.getLogs();
+        },
         async changeSensorName(newName: string, sensorData: SensorData) {
             await postRequest(['sensors', 'rename'], {newName, sensorData});
             await this.getSensorData();
@@ -89,9 +96,6 @@ export default Vue.extend({
         async getLogs() {
             const response = await postRequest(['logs', 'get'], {date: this.selectedDate});
             this.tempData = response.data.log;
-        },
-        async refreshData() {
-            await this.getLogs();
         },
         async getSensorData() {
             const response = await postRequest(['sensors', 'get']);
