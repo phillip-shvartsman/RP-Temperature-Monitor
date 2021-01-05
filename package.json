@@ -16,7 +16,7 @@
     "debug-db": "DEBUG=database node ./dist/app.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "dotenv": "^8.0.0",
     "knex": "^0.16.5",
     "moment": "^2.24.0",
